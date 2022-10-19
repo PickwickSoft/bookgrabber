@@ -8,7 +8,11 @@ class BookGrabber {
 
     private val bookService: BookService = BookService()
 
-    fun getBooksByISBN(isbn: String): Optional<Book> {
-        return bookService.getBooksByISBN(isbn)
+    fun getBookByISBN(isbn: String): Optional<Book> {
+        return bookService.getBookByISBN(isbn)
+    }
+
+    fun getCoverFromURL(url: String): Optional<ByteArray> {
+        return bookService.getCoverFromURL(url)
     }
 }

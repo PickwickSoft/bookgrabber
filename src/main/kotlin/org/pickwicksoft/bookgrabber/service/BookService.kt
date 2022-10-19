@@ -8,7 +8,10 @@ import com.google.gson.GsonBuilder
 import org.json.JSONException
 import org.json.JSONObject
 import org.pickwicksoft.bookgrabber.model.Book
+import java.io.ByteArrayOutputStream
+import java.net.URL
 import java.util.*
+
 
 class BookService {
 
@@ -16,7 +19,7 @@ class BookService {
         .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
         .create()
 
-    fun getBooksByISBN(isbn: String): Optional<Book> {
+    fun getBookByISBN(isbn: String): Optional<Book> {
         return getBookFromOpenLibrary(isbn)
     }
 
@@ -31,8 +34,7 @@ class BookService {
 
         val book = parseBookFromJSON(bookJSON)
 
-        if (book != null) return Optional.of(book)
-        return Optional.empty()
+        return wrapOrEmpty(book)
     }
 
     private fun getJSONBookFromOpenLibrary(isbn: String): JSONObject? {
@@ -43,5 +45,29 @@ class BookService {
 
     private fun parseBookFromJSON(bookJSON: JSONObject?): Book? {
         return gson.fromJson(bookJSON.toString(), Book::class.java)
+    }
+
+    // Download image from url and return it as byte array
+    fun getCoverFromURL(url: String): Optional<ByteArray> {
+        try {
+            val imageUrl = URL(url)
+            val urlConnection = imageUrl.openConnection()
+            val inputStream = urlConnection.getInputStream()
+            val outputStream = ByteArrayOutputStream()
+            val buffer = ByteArray(1024)
+            var read = 0
+            while (inputStream.read(buffer, 0, buffer.size).also { read = it } != -1) {
+                outputStream.write(buffer, 0, read)
+            }
+            outputStream.flush()
+            return wrapOrEmpty(outputStream.toByteArray())
+        } catch (_: Exception) {
+        }
+        return wrapOrEmpty(null)
+    }
+
+    private fun <T : Any> wrapOrEmpty(obj: T?): Optional<T> {
+        if (obj != null) return Optional.of(obj)
+        return Optional.empty()
     }
 }
