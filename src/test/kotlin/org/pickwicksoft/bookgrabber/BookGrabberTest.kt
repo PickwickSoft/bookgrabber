@@ -10,11 +10,25 @@ internal class BookGrabberTest {
     private var bookGrabber: BookGrabber = BookGrabber()
 
     @Test
-    fun `get books by valid ISBN not empty`() {
+    fun `get book by valid ISBN not empty`() {
         val books = bookGrabber.getBookByISBN("9783257230451")
         assertThat(books).isPresent
         assertThat(books.getOrNull()).isNotNull
     }
+
+    @Test
+    fun `get book by valid ISBN with hyphen not empty`() {
+        val books = bookGrabber.getBookByISBN("978-3-257-23045-1")
+        assertThat(books).isPresent
+        assertThat(books.getOrNull()).isNotNull
+    }
+
+    @Test
+    fun `get book by valid ISBN with hyphen contains correct information`() {
+        val books = bookGrabber.getBookByISBN("978-3-257-23045-1")
+        assertThat(books.get().title).isEqualTo("Der Besuch der alten Dame")
+    }
+
 
     @Test
     fun `get book by valid ISBN contains correct information`() {
