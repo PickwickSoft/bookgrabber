@@ -1,6 +1,7 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
+    java
     kotlin("jvm") version "1.7.20"
     `maven-publish`
 }
@@ -31,16 +32,14 @@ tasks.withType<KotlinCompile> {
     kotlinOptions.jvmTarget = "1.8"
 }
 
-afterEvaluate {
-    publishing {
-        publications {
-            create<MavenPublication>("maven") {
-                groupId = "com.github.PickwickSoft"
-                artifactId = "bookgrabber"
-                version = "0.1"
+publishing {
+    publications {
+        create<MavenPublication>("maven") {
+            groupId = "com.github.PickwickSoft"
+            artifactId = "bookgrabber"
+            version = "0.1"
 
-                from(components["java"])
-            }
+            from(components["java"])
         }
     }
 }
